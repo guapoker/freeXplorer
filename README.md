@@ -4,6 +4,10 @@ A free Windows tool for Xbox 360 hard drives. It shows the partitions of a 360 d
 
 It was written from public documentation of the file system. No code from any other tool is in it.
 
+![freeXplorer in light mode](screenshots/light.png)
+
+![freeXplorer in dark mode](screenshots/dark.png)
+
 ## Heads up
 
 freeXplorer writes to disks. Formatting and restoring a backup erase whatever is on the target, so check the disk number and keep a backup of anything you care about. Reading and mounting read-only have been tried on real drives. Backing up, writing, formatting and restoring have only been run on image files and on a virtual disk so far (a backup of a real drive was started and stopped again), and I haven't tried a drive made with it in a console yet.
