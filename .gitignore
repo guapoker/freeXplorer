@@ -1,0 +1,15 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+dist/
+TestResults/
+*.img
+*.bin
+*.log
+
+# write-ups and notes that stay on my machine
+notes/
+*.md
+!README.md

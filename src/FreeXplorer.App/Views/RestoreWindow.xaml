@@ -1,0 +1,80 @@
+<Window x:Class="FreeXplorer.App.Views.RestoreWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Restore backup" Width="620" SizeToContent="Height" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Background="{DynamicResource WindowBackground}" FontFamily="Segoe UI" FontSize="13"
+        Foreground="{DynamicResource TextPrimary}" UseLayoutRounding="True">
+  <StackPanel Margin="20">
+    <TextBlock Text="Restore a backup to a drive" FontSize="17" FontWeight="SemiBold"/>
+
+    <Border Background="{DynamicResource DangerBackground}" BorderBrush="{DynamicResource DangerBorder}" BorderThickness="1"
+            CornerRadius="4" Padding="12,10" Margin="0,12,0,14">
+      <TextBlock Text="{Binding Warning}" TextWrapping="Wrap"/>
+    </Border>
+
+    <TextBlock Text="Backup file"/>
+    <DockPanel Margin="0,4,0,2">
+      <Button DockPanel.Dock="Right" Style="{StaticResource PlainButton}" Content="Browse..." Margin="6,0,0,0" Click="OnBrowse"/>
+      <TextBox x:Name="BackupBox" Text="{Binding BackupPath, UpdateSourceTrigger=PropertyChanged}"/>
+    </DockPanel>
+    <TextBlock Text="{Binding BackupProblem}" Foreground="{DynamicResource ErrorText}" TextWrapping="Wrap"/>
+    <TextBlock Text="{Binding BackupNote}" Style="{StaticResource Muted}" TextWrapping="Wrap" FontSize="12"/>
+
+    <TextBlock Text="Restore it to" Margin="0,12,0,4"/>
+    <Border Style="{StaticResource Card}">
+      <ListBox x:Name="TargetList" ItemsSource="{Binding Targets}" SelectedItem="{Binding SelectedTarget, Mode=TwoWay}"
+               BorderThickness="0" Background="Transparent" MaxHeight="250" VirtualizingPanel.IsVirtualizing="False"
+               ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListBox.ItemContainerStyle>
+          <Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
+            <Setter Property="IsEnabled" Value="{Binding Enabled}"/>
+            <Style.Triggers>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.6"/>
+              </Trigger>
+            </Style.Triggers>
+          </Style>
+        </ListBox.ItemContainerStyle>
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel>
+              <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+              <TextBlock Text="{Binding Note}" Foreground="{DynamicResource NoteText}" FontSize="12" TextTrimming="CharacterEllipsis">
+                <TextBlock.Style>
+                  <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding Enabled}" Value="True">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </TextBlock.Style>
+              </TextBlock>
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Border>
+
+    <CheckBox Margin="0,12,0,0" IsChecked="{Binding Verify}"
+              Content="Read the drive back afterwards and check it matches the backup (takes about as long again)"/>
+
+    <CheckBox x:Name="KeepBox" Margin="0,8,0,0" IsChecked="{Binding KeepTargetHeader}" IsEnabled="{Binding CanKeepHeader}"
+              Content="Keep this drive's own security sector (its first 512 KB)"/>
+    <TextBlock Text="{Binding KeepHeaderNote}" Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="22,2,0,0"/>
+
+    <TextBlock Margin="0,14,0,6" TextWrapping="Wrap">
+      <Run Text="To continue, type"/>
+      <Run Text="{Binding ConfirmationPhrase, Mode=OneWay}" FontWeight="Bold"/>
+      <Run Text="below."/>
+    </TextBlock>
+    <TextBox x:Name="ConfirmBox" Text="{Binding ConfirmText, UpdateSourceTrigger=PropertyChanged}"/>
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+      <Button Style="{StaticResource PlainButton}" Content="Cancel" IsCancel="True" MinWidth="80"/>
+      <Button Style="{StaticResource DangerButton}" Content="Restore" IsDefault="True" MinWidth="90" Margin="0"
+              IsEnabled="{Binding CanRestore}" Click="OnRestore"/>
+    </StackPanel>
+  </StackPanel>
+</Window>

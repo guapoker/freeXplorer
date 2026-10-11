@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <Authors>AlvaroEPena</Authors>
+    <Product>freeXplorer</Product>
+    <Copyright>Copyright (c) 2026 AlvaroEPena</Copyright>
+    <Version>1.0.0</Version>
+    <RepositoryUrl>https://github.com/AlvaroEPena/freeXplorer</RepositoryUrl>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+</Project>

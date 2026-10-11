@@ -1,0 +1,13 @@
+<Window x:Class="FreeXplorer.App.Views.TextWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="640" Height="420" MinWidth="420" MinHeight="260" ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner" Background="{DynamicResource WindowBackground}"
+        Foreground="{DynamicResource TextPrimary}" FontFamily="Segoe UI" FontSize="13" UseLayoutRounding="True">
+  <DockPanel Margin="16">
+    <Button DockPanel.Dock="Bottom" Style="{StaticResource PlainButton}" Content="Close" IsDefault="True" IsCancel="True"
+            HorizontalAlignment="Right" MinWidth="80" Margin="0,12,0,0"/>
+    <TextBox x:Name="Body" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+             FontFamily="Consolas" FontSize="12"/>
+  </DockPanel>
+</Window>

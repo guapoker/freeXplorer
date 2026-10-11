@@ -1,0 +1,31 @@
+freeXplorer is MIT licensed (see LICENSE). It uses the following.
+
+WinFsp
+------
+WinFsp - Windows File System Proxy, Copyright (C) Bill Zissimopoulos
+https://github.com/winfsp/winfsp
+
+Mounting goes through WinFsp, a Windows file system driver that is installed
+separately. The managed binding (the winfsp.net NuGet package, winfsp-msil.dll)
+is referenced and ships next to the programs. The driver itself doesn't. The
+Install driver button downloads the installer from WinFsp's own GitHub release,
+checks it against a SHA-256 checksum that is built into the program, and runs it.
+
+WinFsp is GPLv3 with an exception for free and open source software. Under that
+exception it can be linked without the linking software becoming GPLv3, as long
+as the software:
+
+  1. is distributed under a license that meets the Free Software Definition or
+     the Open Source Definition (MIT does),
+  2. shows the notice above, with the link, in its user interface and its
+     user-facing documentation, and
+  3. isn't linked or distributed with proprietary software.
+
+The notice is in the bottom right of the window, in the help text of the command
+line tool, in the README and in this file. If you fork this and ship it, keep
+those and keep it open source. The full license is at
+https://github.com/winfsp/winfsp/blob/master/License.txt
+
+Only used to run the tests (not shipped)
+----------------------------------------
+xUnit (Apache 2.0), Microsoft.NET.Test.Sdk (MIT), coverlet.collector (MIT)

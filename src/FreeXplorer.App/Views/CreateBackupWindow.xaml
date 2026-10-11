@@ -1,0 +1,34 @@
+<Window x:Class="FreeXplorer.App.Views.CreateBackupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Create backup" Width="560" SizeToContent="Height" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Background="{DynamicResource WindowBackground}" FontFamily="Segoe UI" FontSize="13"
+        Foreground="{DynamicResource TextPrimary}" UseLayoutRounding="True">
+  <StackPanel Margin="20">
+    <TextBlock Text="{Binding Heading}" FontSize="17" FontWeight="SemiBold" TextWrapping="Wrap"/>
+    <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,6,0,14"
+               Text="Saves an exact copy of the whole drive in one file, every partition included. Later you can load it to look inside, or restore it onto another drive. It can take a while, and you can stop at any time."/>
+
+    <TextBlock Text="Save it as"/>
+    <DockPanel Margin="0,4,0,4">
+      <Button DockPanel.Dock="Right" Style="{StaticResource PlainButton}" Content="Browse..." Margin="6,0,0,0" Click="OnBrowse"/>
+      <TextBox x:Name="PathBox" Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}"/>
+    </DockPanel>
+    <TextBlock Text="{Binding Problem}" Foreground="{DynamicResource ErrorText}" TextWrapping="Wrap" Margin="0,0,0,4"/>
+    <TextBlock Text="{Binding Warning}" Foreground="{DynamicResource NoteText}" TextWrapping="Wrap" Margin="0,0,0,4"/>
+    <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap">
+      <Run Text="{Binding SizeText, Mode=OneWay}"/>
+      <Run Text="{Binding SpaceText, Mode=OneWay}"/>
+    </TextBlock>
+
+    <CheckBox Margin="0,12,0,0" IsChecked="{Binding Verify}"
+              Content="Read the backup back afterwards and check it matches (takes a little longer)"/>
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+      <Button Style="{StaticResource PlainButton}" Content="Cancel" IsCancel="True" MinWidth="80"/>
+      <Button Style="{StaticResource AccentButton}" Content="Create backup" IsDefault="True" MinWidth="110" Margin="0"
+              IsEnabled="{Binding CanCreate}" Click="OnCreate"/>
+    </StackPanel>
+  </StackPanel>
+</Window>

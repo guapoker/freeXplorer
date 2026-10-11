@@ -1,0 +1,36 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <SolidColorBrush x:Key="WindowBackground" Color="#1B1D21"/>
+  <SolidColorBrush x:Key="CardBackground" Color="#25282D"/>
+  <SolidColorBrush x:Key="BarBackground" Color="#202328"/>
+  <SolidColorBrush x:Key="Border" Color="#3A3F47"/>
+  <SolidColorBrush x:Key="Accent" Color="#1E8E22"/>
+  <SolidColorBrush x:Key="AccentHover" Color="#27A82C"/>
+  <SolidColorBrush x:Key="TextPrimary" Color="#E7E9ED"/>
+  <SolidColorBrush x:Key="TextMuted" Color="#9BA2AE"/>
+  <SolidColorBrush x:Key="ErrorText" Color="#FF8F85"/>
+  <SolidColorBrush x:Key="NoteText" Color="#E5A646"/>
+  <SolidColorBrush x:Key="WarnBackground" Color="#3A3217"/>
+  <SolidColorBrush x:Key="WarnBorder" Color="#7C6A25"/>
+  <SolidColorBrush x:Key="DangerBackground" Color="#3A2226"/>
+  <SolidColorBrush x:Key="DangerBorder" Color="#8B3D44"/>
+  <SolidColorBrush x:Key="DangerFill" Color="#C73A32"/>
+  <SolidColorBrush x:Key="DangerFillHover" Color="#DB4B42"/>
+  <SolidColorBrush x:Key="Selected" Color="#323C4D"/>
+  <SolidColorBrush x:Key="MountedRow" Color="#1F4B2B"/>
+  <SolidColorBrush x:Key="MountedSelectedRow" Color="#2B6A3C"/>
+  <SolidColorBrush x:Key="StatusGood" Color="#3FB950"/>
+  <SolidColorBrush x:Key="StatusBad" Color="#F0584D"/>
+  <SolidColorBrush x:Key="StatusWait" Color="#E8A33A"/>
+  <SolidColorBrush x:Key="ControlBackground" Color="#2C3037"/>
+  <SolidColorBrush x:Key="ControlHover" Color="#373C45"/>
+  <SolidColorBrush x:Key="ItemHover" Color="#2D3139"/>
+  <SolidColorBrush x:Key="HeaderBackground" Color="#2B2F36"/>
+  <SolidColorBrush x:Key="GridLine" Color="#30343B"/>
+  <SolidColorBrush x:Key="InputBackground" Color="#1D2024"/>
+  <SolidColorBrush x:Key="CheckBorder" Color="#7B8390"/>
+  <SolidColorBrush x:Key="SwitchOff" Color="#5B626E"/>
+  <SolidColorBrush x:Key="ScrollbarThumb" Color="#4A505B"/>
+  <SolidColorBrush x:Key="ScrollbarThumbHover" Color="#646B78"/>
+  <SolidColorBrush x:Key="ProgressTrack" Color="#353A42"/>
+</ResourceDictionary>
