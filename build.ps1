@@ -27,7 +27,7 @@ if (Test-Path $out) { Remove-Item $out -Recurse -Force }
 foreach ($project in 'src\FreeXplorer.App', 'src\FreeXplorer.Cli') {
     dotnet publish $project --configuration Release --runtime win-x64 `
         --self-contained:$($SelfContained.IsPresent) --output $out `
-        -p:DebugType=None -p:DebugSymbols=false --nologo
+        -p:DebugType=None -p:DebugSymbols=false -p:SatelliteResourceLanguages=en --nologo
     if ($LASTEXITCODE -ne 0) { throw "publish failed for $project" }
 }
 
