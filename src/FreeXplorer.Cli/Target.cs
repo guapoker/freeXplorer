@@ -34,23 +34,48 @@ sealed partial class Target : IDisposable
 
     public static Target Open(string spec, bool writable, bool allowPcDisk = false)
     {
+        PhysicalDiskInfo? info = null;
         if (TryParseDisk(spec, out int number))
         {
-            var info = PhysicalDisks.List().FirstOrDefault(d => d.Number == number)
+            info = PhysicalDisks.List().FirstOrDefault(d => d.Number == number)
                 ?? throw new FileNotFoundException($"there's no disk {number}. Run \"list\" to see what's connected.");
+        }
+        else if (!OperatingSystem.IsWindows() && spec.StartsWith("/dev/", StringComparison.Ordinal))
+        {
+            // a /dev path never gets opened as an image, that would skip the safety checks
+            string path = ResolveDevice(spec);
+            info = PhysicalDisks.List().FirstOrDefault(d => d.Path == path)
+                ?? throw new FileNotFoundException($"{spec} isn't a whole disk. Run \"list\" to see what's connected.");
+        }
+
+        if (info is not null)
+        {
             if (writable)
             {
                 var verdict = DiskSafety.CanWrite(info, allowPcDisk);
                 if (!verdict.Allowed)
                     throw new InvalidOperationException(verdict.Reason);
             }
-            return new Target(PhysicalDiskDevice.Open(number, writable), info.Display, info, writable);
+            return new Target(PhysicalDiskDevice.Open(info, writable), info.Display, info, writable);
         }
 
         if (!File.Exists(spec))
-            throw new FileNotFoundException($"can't find \"{spec}\". Give a disk like disk:3 or the path of an image file.");
+            throw new FileNotFoundException($"can't find \"{spec}\". Give a disk like disk:3{(OperatingSystem.IsWindows() ? "" : " or /dev/sdb")} or the path of an image file.");
         var device = new FileBlockDevice(spec, writable);
         return new Target(device, device.Name, null, writable);
+    }
+
+    // /dev/disk/by-id/... and friends are links to the real /dev/sdX
+    static string ResolveDevice(string spec)
+    {
+        try
+        {
+            return new FileInfo(spec).ResolveLinkTarget(returnFinalTarget: true)?.FullName ?? spec;
+        }
+        catch (IOException)
+        {
+            return spec;
+        }
     }
 
     // The partition the user asked for, or the obvious one if they didn't say

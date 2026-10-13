@@ -12,7 +12,13 @@ public static class DiskSafety
     public static SafetyVerdict CanWrite(PhysicalDiskInfo disk, bool allowPcDisk = false)
     {
         if (disk.IsSystem)
-            return SafetyVerdict.Blocked($"Disk {disk.Number} is the disk Windows is running from. This program will never write to it.");
+            return SafetyVerdict.Blocked(OperatingSystem.IsWindows()
+                ? $"Disk {disk.Number} is the disk Windows is running from. This program will never write to it."
+                : $"Disk {disk.Number} ({disk.Path}) is the disk the system is running from. This program will never write to it.");
+        if (disk.HasVolumes && !allowPcDisk && !OperatingSystem.IsWindows())
+            return SafetyVerdict.Blocked(
+                $"Disk {disk.Number} ({disk.Path}) has partitions that are mounted or in use, so it looks like a normal PC disk and not an Xbox 360 drive. " +
+                "If you're sure, unmount them and pass --allow-pc-disk to the command line tool.");
         if (disk.HasVolumes && !allowPcDisk)
             return SafetyVerdict.Blocked(
                 $"Disk {disk.Number} has drive letters assigned, so it looks like a normal PC disk and not an Xbox 360 drive. " +

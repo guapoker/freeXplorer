@@ -59,6 +59,24 @@ freexplorer-cli mount practice.img content --rw --letter X: --hold 600
 
 `freexplorer-cli help` lists every command. Real disks need an administrator prompt, and anything that erases a disk asks you to type `disk N` first (or pass `--confirm "disk N"` in a script). `--dry-run` shows what a format would write and writes nothing. Image files need no special rights, so they're good for practice.
 
+## Linux
+
+The command line tool also runs on Linux (x64 and arm64). Everything works there except `mount`, which needs WinFsp and so is Windows only for now. The window is Windows only too.
+
+- Install the .NET 10 runtime (`sudo apt install dotnet-runtime-10.0` on Ubuntu), or use the self-contained build
+- A disk is `disk:N` from `list` or its path, like `/dev/sdb` or `/dev/disk/by-id/usb-...`. The numbers follow the device names and can change when you plug drives in or out, so check `list` again before you format or restore
+- Reading a disk needs root (`sudo`) or membership in the `disk` group
+- Writing is refused while any partition of the disk is mounted, so unmount it first if your desktop mounted it on its own
+
+```
+sudo ./freexplorer-cli list
+sudo ./freexplorer-cli info /dev/sdb
+sudo ./freexplorer-cli get /dev/sdb content /Content ~/xbox-content
+sudo ./freexplorer-cli backup /dev/sdb ~/backups/hdd.img
+```
+
+`./build.sh` runs the tests and puts the tool and a `.tar.gz` in `dist`. `./build.sh --self-contained` bundles the runtime too.
+
 ## Building
 
 You need the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).

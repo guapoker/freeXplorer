@@ -1,3 +1,4 @@
+#if WINDOWS
 using FreeXplorer.Fatx;
 using FreeXplorer.Mount;
 using FreeXplorer.Xbox360;
@@ -114,3 +115,16 @@ static partial class Commands
         throw new UsageException("--letter should look like X:");
     }
 }
+#else
+namespace FreeXplorer.Cli;
+
+static partial class Commands
+{
+    // Mounting goes through WinFsp, which only exists on Windows
+    public static int Mount(string[] args, CliContext ctx)
+    {
+        ctx.Err.WriteLine("freexplorer: mounting isn't available on this system yet. Use ls, get and put to work with the files.");
+        return 1;
+    }
+}
+#endif

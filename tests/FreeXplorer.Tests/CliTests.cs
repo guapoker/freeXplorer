@@ -1,6 +1,8 @@
 using System.Security.Cryptography;
 using FreeXplorer.Cli;
+#if WINDOWS
 using FreeXplorer.Mount;
+#endif
 
 namespace FreeXplorer.Tests;
 
@@ -350,6 +352,7 @@ public class CliTests : IDisposable
         Assert.Contains("error", r.Out);
     }
 
+#if WINDOWS
     [Fact]
     public void Mount_explains_what_to_install_when_winfsp_is_missing()
     {
@@ -360,6 +363,16 @@ public class CliTests : IDisposable
         Assert.Equal(1, r.Code);
         Assert.Contains("WinFsp", r.Err);
     }
+#else
+    [Fact]
+    public void Mount_says_it_is_not_available_yet()
+    {
+        string image = NewImage();
+        var r = Run("mount", image, "content");
+        Assert.Equal(1, r.Code);
+        Assert.Contains("isn't available", r.Err);
+    }
+#endif
 
     [Fact]
     public void Sizes_parse_the_way_people_type_them()

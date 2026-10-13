@@ -90,8 +90,9 @@ static class Cli
 
         usage: freexplorer-cli <command> [options]
 
-        Targets are a physical disk (disk:3) or a raw image file. Physical disks need an
-        administrator prompt. Partitions are content, compat, sysext and sysext2.
+        Targets are a physical disk (disk:3, or /dev/sdb on Linux) or a raw image file.
+        Physical disks need an administrator prompt, or sudo on Linux. Partitions are
+        content, compat, sysext and sysext2.
 
         looking around
           list [--scan]                         show the disks connected to this PC
@@ -119,7 +120,7 @@ static class Cli
                  --keep-header leaves the target's own first 512 KB, its security sector, as it
                  is. Only for a drive the console sees at the same size as the original.
 
-        mounting (needs WinFsp, see the readme)
+        mounting (Windows only for now, needs WinFsp, see the readme)
           mount <target> [partition|all] [--rw] [--letter X: | --folder PATH] [--hold SECONDS]
 
         Everything is read-only unless the command is one that changes things. Mounts are

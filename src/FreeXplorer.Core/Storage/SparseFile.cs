@@ -23,11 +23,16 @@ public static class SparseFile
             if (low != 0xFFFFFFFF || Marshal.GetLastWin32Error() == 0)
                 return ((long)high << 32) | low;
         }
+        else if (OperatingSystem.IsLinux() && Libc.AllocatedBytes(path) is long allocated)
+        {
+            return allocated;
+        }
         return new FileInfo(path).Length;
     }
 
     // Tells NTFS not to allocate the zeros of a big empty image. Quietly does nothing
-    // on file systems that can't do it, the image just takes real space there.
+    // on file systems that can't do it, the image just takes real space there. Linux
+    // file systems leave holes without being asked.
     public static bool TryMark(SafeFileHandle handle)
     {
         if (!OperatingSystem.IsWindows())

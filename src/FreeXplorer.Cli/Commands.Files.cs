@@ -218,7 +218,11 @@ static partial class Commands
     {
         if (node.IsDirectory)
         {
-            Directory.CreateDirectory(destination);
+            if (!Directory.Exists(destination))
+            {
+                Directory.CreateDirectory(destination);
+                FileOwner.GiveToSudoUser(destination);
+            }
             foreach (var child in vol.GetChildren(node))
                 CopyOut(vol, child, Path.Combine(destination, child.Name), force, stats);
             return;
@@ -235,6 +239,7 @@ static partial class Commands
             using (var input = new FatxStream(vol, node))
                 input.CopyTo(output, 1 << 20);
             File.SetLastWriteTime(destination, node.Modified);
+            FileOwner.GiveToSudoUser(destination);
             stats.Files++;
             stats.Bytes += node.Size;
             stats.Note($"  {node.Path}");

@@ -34,6 +34,7 @@ public sealed class FileBlockDevice : IBlockDevice
                 SparseFile.TryMark(fs.SafeFileHandle);
             fs.SetLength(length);
         }
+        FileOwner.GiveToSudoUser(path);
         return new FileBlockDevice(path, true);
     }
 

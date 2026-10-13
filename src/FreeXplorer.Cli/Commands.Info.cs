@@ -25,27 +25,28 @@ static partial class Commands
         {
             var notes = new List<string>();
             if (d.IsSystem) notes.Add("system disk");
-            else if (d.HasVolumes) notes.Add("has drive letters");
+            else if (d.HasVolumes) notes.Add(OperatingSystem.IsWindows() ? "has drive letters" : "mounted");
             ctx.Out.WriteLine($"disk:{d.Number,-3} {d.Display}{(notes.Count > 0 ? "  [" + string.Join(", ", notes) + "]" : "")}");
 
             if (a.Has("scan") && admin && !d.IsSystem)
             {
                 try
                 {
-                    using var dev = PhysicalDiskDevice.Open(d.Number, writable: false);
+                    using var dev = PhysicalDiskDevice.Open(d, writable: false);
                     var scan = DriveScanner.Scan(dev);
                     ctx.Out.WriteLine($"        {Describe(scan.Kind)}");
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
                 {
                     ctx.Out.WriteLine($"        couldn't read it: {ex.Message}");
                 }
             }
         }
+        string elevated = OperatingSystem.IsWindows() ? "from an administrator prompt" : "with sudo";
         if (a.Has("scan") && !admin)
-            ctx.Out.WriteLine("\nRun this from an administrator prompt to look inside the disks.");
+            ctx.Out.WriteLine($"\nRun this {elevated} to look inside the disks.");
         else if (!a.Has("scan"))
-            ctx.Out.WriteLine("\nUse \"info disk:N\" to see what's on one, from an administrator prompt.");
+            ctx.Out.WriteLine($"\nUse \"info disk:N\" to see what's on one, {elevated}.");
         return 0;
     }
 

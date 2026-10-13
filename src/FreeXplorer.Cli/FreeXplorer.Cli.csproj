@@ -2,7 +2,10 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <!-- Mounting needs WinFsp, which only exists on Windows. Everywhere else the tool is
+         built without it. -->
+    <TargetFramework Condition="$([MSBuild]::IsOSPlatform('Windows'))">net10.0-windows</TargetFramework>
+    <TargetFramework Condition="!$([MSBuild]::IsOSPlatform('Windows'))">net10.0</TargetFramework>
     <AssemblyName>freexplorer-cli</AssemblyName>
     <RootNamespace>FreeXplorer.Cli</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -14,7 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FreeXplorer.Core\FreeXplorer.Core.csproj" />
-    <ProjectReference Include="..\FreeXplorer.WinFsp\FreeXplorer.WinFsp.csproj" />
+    <ProjectReference Include="..\FreeXplorer.WinFsp\FreeXplorer.WinFsp.csproj" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
   </ItemGroup>
 
 </Project>

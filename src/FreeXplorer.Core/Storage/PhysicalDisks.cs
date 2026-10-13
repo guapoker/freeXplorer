@@ -15,9 +15,10 @@ public sealed record PhysicalDiskInfo(
     bool HasVolumes,
     bool IsSystem)
 {
-    public string Path => PhysicalDisks.PathFor(Number);
+    // \\.\PhysicalDriveN on Windows, /dev/sdX on Linux
+    public string Path { get; init; } = PhysicalDisks.PathFor(Number);
 
-    public string Display => $"Disk {Number}: {(string.IsNullOrWhiteSpace(Model) ? "Unknown drive" : Model)} ({Size.Format(Length)}, {Bus})";
+    public string Display => $"Disk {Number}: {(string.IsNullOrWhiteSpace(Model) ? "Unknown drive" : Model)} ({Size.Format(Length)}, {Bus}{(Path.StartsWith("/dev/") ? ", " + Path : "")})";
 }
 
 public static class Size
@@ -32,7 +33,7 @@ public static class Size
             value /= 1024;
             unit++;
         }
-        return unit == 0 ? $"{bytes} B" : $"{value:0.#} {units[unit]}";
+        return unit == 0 ? $"{bytes} B" : string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{value:0.#} {units[unit]}");
     }
 }
 
@@ -43,7 +44,7 @@ public static class PhysicalDisks
     public static bool IsAdministrator()
     {
         if (!OperatingSystem.IsWindows())
-            return false;
+            return Environment.IsPrivilegedProcess;
         using var identity = WindowsIdentity.GetCurrent();
         return new WindowsPrincipal(identity).IsInRole(WindowsBuiltInRole.Administrator);
     }
@@ -51,6 +52,8 @@ public static class PhysicalDisks
     // Looks at every disk without reading from it, so it works without elevation
     public static IReadOnlyList<PhysicalDiskInfo> List()
     {
+        if (OperatingSystem.IsLinux())
+            return LinuxDisks.List();
         var disks = new List<PhysicalDiskInfo>();
         if (!OperatingSystem.IsWindows())
             return disks;

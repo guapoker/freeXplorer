@@ -63,7 +63,7 @@ public static partial class DriveBackup
         if (File.Exists(full) || Directory.Exists(full))
             return new DestinationCheck("There's already something with that name.", null, 0, false);
 
-        string? root = Path.GetPathRoot(full);
+        string? root = OperatingSystem.IsWindows() ? Path.GetPathRoot(full) : MountPointOf(full);
         if (root is null || root.StartsWith(@"\\", StringComparison.Ordinal))
             return new DestinationCheck(null, "This is a network location, so there's no way to tell how much room it has.", 0, false);
 
@@ -72,7 +72,10 @@ public static partial class DriveBackup
             var drive = new DriveInfo(root);
             string format = drive.DriveFormat;
             bool sparse = format.Equals("NTFS", StringComparison.OrdinalIgnoreCase)
-                || format.Equals("ReFS", StringComparison.OrdinalIgnoreCase);
+                || format.Equals("ReFS", StringComparison.OrdinalIgnoreCase)
+                || (!OperatingSystem.IsWindows() && UnixSparseFormats.Contains(format));
+            if (format is "vfat" or "msdos")
+                format = "FAT32";
             long free = drive.AvailableFreeSpace;
 
             if (length > 0xFFFFFFFFL && format.StartsWith("FAT", StringComparison.OrdinalIgnoreCase))
@@ -95,6 +98,25 @@ public static partial class DriveBackup
         {
             return new DestinationCheck(null, "Couldn't tell how much room there is.", 0, false);
         }
+    }
+
+    static readonly HashSet<string> UnixSparseFormats = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "ext2", "ext3", "ext4", "btrfs", "xfs", "zfs", "f2fs", "tmpfs", "ntfs", "ntfs3", "bcachefs", "jfs", "reiserfs",
+    };
+
+    // The folder a path's file system is mounted on, the longest mount point that contains it
+    static string MountPointOf(string full)
+    {
+        string best = "/";
+        foreach (var drive in DriveInfo.GetDrives())
+        {
+            string point = drive.RootDirectory.FullName;
+            string prefix = point.EndsWith('/') ? point : point + "/";
+            if ((full == point || full.StartsWith(prefix, StringComparison.Ordinal)) && point.Length > best.Length)
+                best = point;
+        }
+        return best;
     }
 
     // ---- making a backup ----
@@ -126,6 +148,7 @@ public static partial class DriveBackup
             }
 
             File.WriteAllText(checksum, $"{hash}  {Path.GetFileName(path)}\n");
+            FileOwner.GiveToSudoUser(checksum);
             done = true;
             return new BackupResult(Path.GetFullPath(path), length, hash, options.Verify, SparseFile.SizeOnDisk(path));
         }
