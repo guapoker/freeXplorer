@@ -1,8 +1,6 @@
 using System.Security.Cryptography;
 using FreeXplorer.Cli;
-#if WINDOWS
 using FreeXplorer.Mount;
-#endif
 
 namespace FreeXplorer.Tests;
 
@@ -365,12 +363,14 @@ public class CliTests : IDisposable
     }
 #else
     [Fact]
-    public void Mount_says_it_is_not_available_yet()
+    public void Mount_turns_down_drive_letters_on_linux()
     {
+        if (!FuseMount.IsInstalled)
+            return;
         string image = NewImage();
-        var r = Run("mount", image, "content");
-        Assert.Equal(1, r.Code);
-        Assert.Contains("isn't available", r.Err);
+        var r = Run("mount", image, "content", "--letter", "X:");
+        Assert.Equal(2, r.Code);
+        Assert.Contains("--folder", r.Err);
     }
 #endif
 

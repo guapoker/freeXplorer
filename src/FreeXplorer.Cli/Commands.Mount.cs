@@ -1,4 +1,3 @@
-#if WINDOWS
 using FreeXplorer.Fatx;
 using FreeXplorer.Mount;
 using FreeXplorer.Xbox360;
@@ -16,12 +15,23 @@ static partial class Commands
         string? which = a.Optional(1);
         bool write = a.Has("rw");
 
+#if WINDOWS
         if (!WinFspMount.IsInstalled)
         {
             ctx.Err.WriteLine("freexplorer: WinFsp isn't installed. It's the free driver that lets Windows show a FATX partition as a drive.");
             ctx.Err.WriteLine($"Install it from {WinFspMount.DownloadPage} (or: winget install WinFsp.WinFsp, or the Install driver button in the freeXplorer window) and run this again.");
             return 1;
         }
+#else
+        if (!FuseMount.IsInstalled)
+        {
+            ctx.Err.WriteLine("freexplorer: FUSE isn't available. It's what lets Linux show a FATX partition as a folder.");
+            ctx.Err.WriteLine("Install it (on Ubuntu or Debian: sudo apt install fuse3) and run this again.");
+            return 1;
+        }
+        if (a.Has("letter"))
+            throw new UsageException("drive letters are a Windows thing, use --folder PATH instead");
+#endif
 
         using var target = Target.Open(spec, write, a.Has("allow-pc-disk"));
         var scan = DriveScanner.Scan(target.Device);
@@ -53,8 +63,12 @@ static partial class Commands
                     ctx.Out.WriteLine($"reading {p.Name}...");
                     volume.ScanFreeSpace();
                     string label = volume.Label is { Length: > 0 } l ? l : p.Name;
+#if WINDOWS
                     string? point = a.Get("folder") ?? NormalizeLetter(a.Get("letter"));
                     var m = WinFspMount.Mount(volume, label, point);
+#else
+                    var m = FuseMount.Mount(volume, label, a.Get("folder"));
+#endif
                     mounted.Add(m);
                     ctx.Out.WriteLine($"{p.Name} is now {m.MountPoint} ({(m.ReadOnly ? "read-only" : "read/write")})");
                 }
@@ -81,7 +95,12 @@ static partial class Commands
             }
             try
             {
+#if WINDOWS
                 Task.WaitAny(new[] { waiting }, ctx.Cancel);
+#else
+                // an umount from outside ends it too
+                Task.WaitAny(mounted.Select(m => m.Ended).Prepend(waiting).ToArray(), ctx.Cancel);
+#endif
             }
             catch (OperationCanceledException)
             {
@@ -103,6 +122,7 @@ static partial class Commands
         }
     }
 
+#if WINDOWS
     static string? NormalizeLetter(string? letter)
     {
         if (letter is null)
@@ -114,17 +134,5 @@ static partial class Commands
             return char.ToUpperInvariant(letter[0]) + ":";
         throw new UsageException("--letter should look like X:");
     }
-}
-#else
-namespace FreeXplorer.Cli;
-
-static partial class Commands
-{
-    // Mounting goes through WinFsp, which only exists on Windows
-    public static int Mount(string[] args, CliContext ctx)
-    {
-        ctx.Err.WriteLine("freexplorer: mounting isn't available on this system yet. Use ls, get and put to work with the files.");
-        return 1;
-    }
-}
 #endif
+}

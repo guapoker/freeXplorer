@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FreeXplorer.Core\FreeXplorer.Core.csproj" />
     <ProjectReference Include="..\FreeXplorer.WinFsp\FreeXplorer.WinFsp.csproj" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
+    <ProjectReference Include="..\FreeXplorer.Fuse\FreeXplorer.Fuse.csproj" Condition="!$([MSBuild]::IsOSPlatform('Windows'))" />
   </ItemGroup>
 
 </Project>

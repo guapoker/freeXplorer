@@ -120,12 +120,13 @@ static class Cli
                  --keep-header leaves the target's own first 512 KB, its security sector, as it
                  is. Only for a drive the console sees at the same size as the original.
 
-        mounting (Windows only for now, needs WinFsp, see the readme)
+        mounting (needs WinFsp on Windows and FUSE on Linux, see the readme)
           mount <target> [partition|all] [--rw] [--letter X: | --folder PATH] [--hold SECONDS]
 
         Everything is read-only unless the command is one that changes things. Mounts are
         read-only unless you pass --rw. Without --letter or --folder a mount takes a free
-        drive letter, counting down from Z, and shows up in This PC.
+        drive letter on Windows, counting down from Z, and shows up in This PC. On Linux it
+        goes in /media/<user>/<name> under sudo and in ~/FATX/<name> otherwise.
 
         Mounting uses WinFsp - Windows File System Proxy, Copyright (C) Bill Zissimopoulos
         https://github.com/winfsp/winfsp

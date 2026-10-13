@@ -18,6 +18,11 @@
 
   <ItemGroup Condition="!$([MSBuild]::IsOSPlatform('Windows'))">
     <Compile Remove="AdapterTests.cs;BackupViewModelTests.cs;MountTests.cs;UiTests.cs;ViewModelTests.cs" />
+    <ProjectReference Include="..\..\src\FreeXplorer.Fuse\FreeXplorer.Fuse.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <Compile Remove="FuseTests.cs" />
   </ItemGroup>
 
   <ItemGroup>

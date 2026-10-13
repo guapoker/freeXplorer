@@ -43,6 +43,8 @@ sealed partial class Target : IDisposable
         else if (!OperatingSystem.IsWindows() && spec.StartsWith("/dev/", StringComparison.Ordinal))
         {
             // a /dev path never gets opened as an image, that would skip the safety checks
+            if (!File.Exists(spec))
+                throw new FileNotFoundException($"there's no {spec}, the drive may have been unplugged. Run \"list\" to see what's connected.");
             string path = ResolveDevice(spec);
             info = PhysicalDisks.List().FirstOrDefault(d => d.Path == path)
                 ?? throw new FileNotFoundException($"{spec} isn't a whole disk. Run \"list\" to see what's connected.");

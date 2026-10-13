@@ -61,18 +61,21 @@ freexplorer-cli mount practice.img content --rw --letter X: --hold 600
 
 ## Linux
 
-The command line tool also runs on Linux (x64 and arm64). Everything works there except `mount`, which needs WinFsp and so is Windows only for now. The window is Windows only too.
+The command line tool also runs on Linux (x64 and arm64), mounting included. The window is Windows only for now.
 
 - Install the .NET 10 runtime (`sudo apt install dotnet-runtime-10.0` on Ubuntu), or use the self-contained build
 - A disk is `disk:N` from `list` or its path, like `/dev/sdb` or `/dev/disk/by-id/usb-...`. The numbers follow the device names and can change when you plug drives in or out, so check `list` again before you format or restore
 - Reading a disk needs root (`sudo`) or membership in the `disk` group
 - Writing is refused while any partition of the disk is mounted, so unmount it first if your desktop mounted it on its own
+- Mounting needs FUSE (`sudo apt install fuse3`, most desktops already have it). Under sudo a partition goes in `/media/<you>/<name>` and its files belong to you, without sudo (for image files) it goes in `~/FATX/<name>`. `--folder PATH` puts it somewhere else. It's read-only unless you pass `--rw`
+- If freeXplorer gets killed while something is mounted, the folder is left answering "Transport endpoint is not connected". Mounting on it again cleans it up, or run `fusermount3 -u <folder>`
 
 ```
 sudo ./freexplorer-cli list
 sudo ./freexplorer-cli info /dev/sdb
 sudo ./freexplorer-cli get /dev/sdb content /Content ~/xbox-content
 sudo ./freexplorer-cli backup /dev/sdb ~/backups/hdd.img
+sudo ./freexplorer-cli mount /dev/sdb content --rw
 ```
 
 `./build.sh` runs the tests and puts the tool and a `.tar.gz` in `dist`. `./build.sh --self-contained` bundles the runtime too.
